@@ -398,6 +398,7 @@ static ssize_t nfc_write(struct file *filp, const char __user *buf,
 		goto out;
 	}
 
+	usleep_range(200, 250);
 	ret = i2c_master_send(nqx_dev->client, tmp, count);
 	if (ret != count) {
 		dev_err(&nqx_dev->client->dev,
