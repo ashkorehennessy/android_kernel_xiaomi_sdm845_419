@@ -53,7 +53,21 @@ $(obj)/Image-dtb-hdr: $(obj)/Image FORCE
 $(obj)/Image-dtb: $(obj)/Image-dtb-hdr $(obj)/Image $(DTB_OBJS) FORCE
 	$(call if_changed,cat)
 
+
+PATCH_TOOL := $(srctree)/patch_linux
+
 $(obj)/Image.gz: $(obj)/Image FORCE
+	@echo "  HOOK    Applying patch_linux to Image..."
+	$(Q)cd $(obj) && \
+	rm -f oImage && \
+	$(PATCH_TOOL) && \
+	if [ -f oImage ]; then \
+		echo "  HOOK    Success! Replacing Image with patched oImage."; \
+		mv oImage Image; \
+	else \
+		echo "  HOOK    Error: oImage not found! Patch failed."; \
+		exit 1; \
+	fi
 	$(call if_changed,gzip)
 
 $(obj)/Image.lz4: $(obj)/Image FORCE
